@@ -15,7 +15,7 @@ package main
 // 	app := awscdk.NewApp(nil)
 
 // 	// WHEN
-// 	stack := NewCdkExampleStack(app, "MyStack", nil)
+// 	stack := GoHtmxCdkExampleStack(app, "MyStack", nil)
 
 // 	// THEN
 // 	template := assertions.Template_FromStack(stack, nil)

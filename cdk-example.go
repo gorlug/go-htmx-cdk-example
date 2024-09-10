@@ -1,8 +1,10 @@
 package main
 
 import (
+	"fmt"
 	"github.com/aws/aws-cdk-go/awscdk/v2"
-	// "github.com/aws/aws-cdk-go/awscdk/v2/awssqs"
+	. "github.com/aws/aws-cdk-go/awscdk/v2/awsapigateway"
+	. "github.com/aws/aws-cdk-go/awscdk/v2/awslambda"
 	"github.com/aws/constructs-go/constructs/v10"
 	"github.com/aws/jsii-runtime-go"
 )
@@ -11,19 +13,31 @@ type CdkExampleStackProps struct {
 	awscdk.StackProps
 }
 
-func NewCdkExampleStack(scope constructs.Construct, id string, props *CdkExampleStackProps) awscdk.Stack {
+func GoHtmxCdkExampleStack(scope constructs.Construct, id string, props *CdkExampleStackProps) awscdk.Stack {
 	var sprops awscdk.StackProps
 	if props != nil {
 		sprops = props.StackProps
 	}
 	stack := awscdk.NewStack(scope, &id, &sprops)
 
-	// The code that defines your stack goes here
+	api := NewRestApi(stack, jsii.String(fmt.Sprint(id, "-api")), &RestApiProps{
+		DefaultCorsPreflightOptions: &CorsOptions{
+			AllowOrigins: jsii.Strings("*"),
+			AllowMethods: &[]*string{
+				jsii.String("*"),
+			},
+		},
+	})
 
-	// example resource
-	// queue := awssqs.NewQueue(stack, jsii.String("CdkExampleQueue"), &awssqs.QueueProps{
-	// 	VisibilityTimeout: awscdk.Duration_Seconds(jsii.Number(300)),
-	// })
+	lambdaFunc := NewFunction(stack, jsii.String("Lambda"), &FunctionProps{
+		Runtime:      Runtime_PROVIDED_AL2023(),
+		Architecture: Architecture_ARM_64(),
+		MemorySize:   jsii.Number(128),
+		Handler:      jsii.String("bootstrap"),
+		Code:         Code_FromAsset(jsii.String("./app/build/"), nil),
+	})
+
+	api.Root().AddMethod(jsii.String("GET"), NewLambdaIntegration(lambdaFunc, nil), nil)
 
 	return stack
 }
@@ -33,7 +47,7 @@ func main() {
 
 	app := awscdk.NewApp(nil)
 
-	NewCdkExampleStack(app, "CdkExampleStack", &CdkExampleStackProps{
+	GoHtmxCdkExampleStack(app, "GoHtmxExampleStack", &CdkExampleStackProps{
 		awscdk.StackProps{
 			Env: env(),
 		},
