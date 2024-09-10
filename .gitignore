@@ -20,5 +20,6 @@ cdk.out
 
 build/
 out/
+tmp/
 
 .idea/

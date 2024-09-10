@@ -1,12 +1,15 @@
 module cdk-example
 
-go 1.18
+go 1.21
+
+toolchain go1.22.6
 
 require (
 	github.com/aws/aws-cdk-go/awscdk/v2 v2.157.0
 	github.com/aws/aws-lambda-go v1.47.0
 	github.com/aws/constructs-go/constructs/v10 v10.3.0
 	github.com/aws/jsii-runtime-go v1.102.0
+	github.com/awslabs/aws-lambda-go-api-proxy v0.16.2
 )
 
 require (
